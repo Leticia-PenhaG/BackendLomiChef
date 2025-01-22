@@ -1,0 +1,19 @@
+{
+  "name": "lomichefnodeproject",
+  "version": "1.0.0",
+  "description": "Backend de la app fast food delivery - Lomi Chef",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "flutter",
+    "delivery",
+    "nodejs"
+  ],
+  "author": "Leti",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
