@@ -7,6 +7,11 @@ const logger = require('morgan');
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
 
+/*
+* RUTAS
+*/
+const users = require('./routes/usersRoutes');
+
 const port = process.env.PORT || 3000;
 
 app.use(logger('dev'));
@@ -20,6 +25,11 @@ app.disable('x-powered-by');
 
 
 app.set('port', port);
+
+/*
+* Llamando a las rutas
+*/
+users(app);
 
 // Iniciar el servidor y escuchar en el puerto especificado
 server.listen(port, '192.168.100.33', () => {
@@ -40,6 +50,11 @@ app.use((err, req, res, next) => {
     console.log(err);
     res.status(err.status || 500).send(err.stack);
 });
+
+module.exports = {
+    app: app,
+    server: server
+}
 
 //200 respuesta exitosa
 //404 ruta no existe
