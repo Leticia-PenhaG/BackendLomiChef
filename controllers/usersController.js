@@ -6,9 +6,17 @@ const UsersController = {};
 UsersController.getAll = async (req, res) => {
     try {
         const users = await User.getAll();
-        res.status(200).json(users);
+        res.status(200).json({
+            success: true,
+            message: 'Usuarios obtenidos exitosamente',
+            data: users,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener los usuarios',
+            data: null,
+        });
     }
 };
 
@@ -18,12 +26,24 @@ UsersController.getById = async (req, res) => {
     try {
         const user = await User.getById(id);
         if (user) {
-            res.status(200).json(user);
+            res.status(200).json({
+                success: true,
+                message: 'Usuario obtenido exitosamente',
+                data: user,
+            });
         } else {
-            res.status(404).json({ message: 'Usuario no encontrado' });
+            res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado',
+                data: null,
+            });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Error al obtener el usuario',
+            data: null,
+        });
     }
 };
 
@@ -33,11 +53,16 @@ UsersController.create = async (req, res) => {
     try {
         const newUser = await User.create(user);
         res.status(201).json({
+            success: true,
             message: 'Usuario creado exitosamente',
-            id: newUser.id
+            data: { id: newUser.id },
         });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Error al crear el usuario',
+            data: null,
+        });
     }
 };
 
@@ -48,12 +73,24 @@ UsersController.update = async (req, res) => {
     try {
         const updatedUser = await User.update(id, user);
         if (updatedUser) {
-            res.status(200).json({ message: 'Usuario actualizado exitosamente' });
+            res.status(200).json({
+                success: true,
+                message: 'Usuario actualizado exitosamente',
+                data: null,
+            });
         } else {
-            res.status(404).json({ message: 'Usuario no encontrado' });
+            res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado',
+                data: null,
+            });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Error al actualizar el usuario',
+            data: null,
+        });
     }
 };
 
@@ -63,12 +100,24 @@ UsersController.delete = async (req, res) => {
     try {
         const deletedUser = await User.delete(id);
         if (deletedUser) {
-            res.status(200).json({ message: 'Usuario eliminado exitosamente' });
+            res.status(200).json({
+                success: true,
+                message: 'Usuario eliminado exitosamente',
+                data: null,
+            });
         } else {
-            res.status(404).json({ message: 'Usuario no encontrado' });
+            res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado',
+                data: null,
+            });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            message: 'Error al eliminar el usuario',
+            data: null,
+        });
     }
 };
 
