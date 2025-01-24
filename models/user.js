@@ -13,15 +13,50 @@ User.getAll = () => {
 };
 
 // Obtener un usuario por ID
-User.getById = (id) => {
+User.getById = (id, callback) => {
     const sql = `
-    SELECT * FROM users
-    WHERE id = $1
+    SELECT 
+        id,
+        email,
+        password,
+        phone,
+        name,
+        image,
+        is_available,
+        lastname,
+        session_token
+    FROM 
+        users
+    WHERE 
+        id = $1
     `;
 
-    return db.oneOrNone(sql, [id]);
+    return db.oneOrNone(sql, id).then(user=> {
+        callback(null, user);
+    });
 };
 
+
+User.findByEmail = (email) => {
+    const sql = `
+    SELECT 
+        id,
+        email,
+        password,
+        phone,
+        name,
+        image,
+        is_available,
+        lastname,
+        session_token
+    FROM 
+        users
+    WHERE
+        email = $1
+    `;
+
+    return db.oneOrNone(sql, email);
+};
 // Crear un nuevo usuario
 User.create = (user) => {
     const passwordEncrypted = crypto.createHash('md5').update(user.password).digest('hex');
@@ -85,5 +120,13 @@ User.delete = (id) => {
 
     return db.oneOrNone(sql, [id]);
 };
+
+User.isPasswordMatched = (userPassword , hash) => {
+    const myPasswordHashed = crypto.createHash('md5').update(userPassword).digest('hex');
+    if(myPasswordHashed === hash) {
+        return true;
+    }
+    return false;
+}
 
 module.exports = User;
