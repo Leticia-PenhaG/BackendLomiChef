@@ -12,7 +12,27 @@ User.getAll = () => {
     return db.manyOrNone(sql);
 };
 
-// Obtener un usuario por ID
+/// Obtiene un usuario por su ID desde la base de datos.
+///
+/// Pasos principales:
+/// 1. Realiza una consulta SQL utilizando el ID proporcionado.
+/// 2. Si el usuario existe, ejecuta el callback con los datos del usuario.
+/// 3. Si no se encuentra el usuario, ejecuta el callback con `null`.
+///
+/// Parámetros:
+/// - `id`: ID del usuario a buscar.
+/// - `callback`: Función que recibe:
+///   - `error`: Error ocurrido durante la consulta (null si no hay error).
+///   - `user`: Objeto del usuario encontrado (null si no se encuentra).
+///
+/// Ejemplo de uso:
+/// User.getById(1, (error, user) => {
+///   if (user) {
+///     console.log("Usuario encontrado:", user);
+///   } else {
+///     console.log("Usuario no encontrado.");
+///   }
+/// });
 User.getById = (id, callback) => {
     const sql = `
     SELECT 
@@ -121,6 +141,7 @@ User.delete = (id) => {
     return db.oneOrNone(sql, [id]);
 };
 
+// Comparar la contraseña proporcionada con la contraseña encriptada
 User.isPasswordMatched = (userPassword , hash) => {
     const myPasswordHashed = crypto.createHash('md5').update(userPassword).digest('hex');
     if(myPasswordHashed === hash) {

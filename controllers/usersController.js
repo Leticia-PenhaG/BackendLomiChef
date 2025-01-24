@@ -68,7 +68,30 @@ UsersController.create = async (req, res) => {
     }
 };
 
-// Función login
+/// Maneja el inicio de sesión del usuario validando credenciales y generando un token JWT.
+///
+/// Pasos principales:
+/// 1. Obtiene el email y contraseña del cuerpo de la solicitud.
+/// 2. Verifica si el usuario con el email proporcionado existe en la base de datos.
+/// 3. Compara la contraseña ingresada con la almacenada (encriptada).
+/// 4. Si las credenciales son correctas, genera un token JWT válido por 24 horas.
+/// 5. Devuelve los datos del usuario junto con el token de sesión.
+/// 
+/// Errores posibles:
+/// - 401: Email no encontrado o contraseña incorrecta.
+/// - 500: Error en el servidor.
+///
+/// Ejemplo de respuesta exitosa:
+/// {
+///   "success": true,
+///   "data": {
+///     "id": 1,
+///     "name": "Juan",
+///     "lastname": "Pérez",
+///     "email": "usuario@ejemplo.com",
+///     "session_token": "JWT token generado"
+///   }
+/// }
 UsersController.login = async (req, res) => {
     try {
         const email = req.body.email;
