@@ -126,6 +126,7 @@ UsersController.login = async (req, res) => {
             return res.status(201).json({
                 success: true,
                 data: data,
+                message: 'Usuario autenticado con éxito',
             });
         } else {
             return res.status(401).json({
