@@ -37,14 +37,6 @@ server.listen(port, '192.168.100.33', () => {
 });
 
 
-app.get('/', (req, res) => {
-    res.send(`Ruta raíz del backend`)
-});
-
-app.get('/test', (req, res) => {
-    res.send(`Ruta test`)
-});
-
 //Error Handler
 app.use((err, req, res, next) => {
     console.log(err);
