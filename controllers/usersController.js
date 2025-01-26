@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const keys = require('../config/keys');
+const Roles = require('../models/roles');
 
 const UsersController = {};
 
@@ -54,6 +55,7 @@ UsersController.create = async (req, res) => {
     const user = req.body;
     try {
         const newUser = await User.create(user);
+        await Roles.create(newUser.id, 1); //cuando se registra un usuario el rol por defecto es USUARIO
         res.status(201).json({
             success: true,
             message: 'Usuario creado exitosamente',
