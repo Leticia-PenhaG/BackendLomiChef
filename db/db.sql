@@ -83,3 +83,36 @@ VALUES(
     '2025-01-25',
     '2025-01-25'
 );
+
+SELECT 
+    u.id,
+    u.email,
+    u.password,
+    phone,
+    u.name,
+    u.image,
+    u.is_available,
+    u.lastname,
+    u.session_token,
+    json_agg(
+        json_build_object(
+            'id', r.id,
+            'name', r.name,
+            'image', r.image,
+            'route', r.route
+            
+        ) 
+    ) as roles
+FROM 
+    users as u
+INNER JOIN 
+    user_has_roles as uhr
+ON
+    u.id = uhr.id_user
+INNER JOIN
+    roles r
+    ON
+    r.id = uhr.id_role
+WHERE
+    u.email = 'irmag@gmail.com'
+GROUP BY u.id

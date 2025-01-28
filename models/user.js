@@ -60,19 +60,37 @@ User.getById = (id, callback) => {
 User.findByEmail = (email) => {
     const sql = `
     SELECT 
-        id,
-        email,
-        password,
+        u.id,
+        u.email,
+        u.password,
         phone,
-        name,
-        image,
-        is_available,
-        lastname,
-        session_token
+        u.name,
+        u.image,
+        u.is_available,
+        u.lastname,
+        u.session_token,
+		json_agg(
+			json_build_object(
+				'id', r.id,
+				'name', r.name,
+				'image', r.image,
+				'route', r.route
+				
+			) 
+		) as roles
     FROM 
-        users
+        users as u
+	INNER JOIN 
+		user_has_roles as uhr
+	ON
+		u.id = uhr.id_user
+	INNER JOIN
+		roles r
+		ON
+		r.id = uhr.id_role
     WHERE
-        email = $1
+        u.email = $1
+	GROUP BY u.id
     `;
 
     return db.oneOrNone(sql, email);
