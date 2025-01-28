@@ -1,15 +1,15 @@
-const db = require('../config/config');
-const crypto = require('crypto');
+const db = require("../config/config");
+const crypto = require("crypto");
 
 const User = {};
 
 // Obtener todos los usuarios
 User.getAll = () => {
-    const sql = `
+  const sql = `
     SELECT * FROM users
     `;
 
-    return db.manyOrNone(sql);
+  return db.manyOrNone(sql);
 };
 
 /// Obtiene un usuario por su ID desde la base de datos.
@@ -34,7 +34,7 @@ User.getAll = () => {
 ///   }
 /// });
 User.getById = (id, callback) => {
-    const sql = `
+  const sql = `
     SELECT 
         id,
         email,
@@ -51,14 +51,13 @@ User.getById = (id, callback) => {
         id = $1
     `;
 
-    return db.oneOrNone(sql, id).then(user=> {
-        callback(null, user);
-    });
+  return db.oneOrNone(sql, id).then((user) => {
+    callback(null, user);
+  });
 };
 
-
 User.findByEmail = (email) => {
-    const sql = `
+  const sql = `
     SELECT 
         u.id,
         u.email,
@@ -93,35 +92,38 @@ User.findByEmail = (email) => {
 	GROUP BY u.id
     `;
 
-    return db.oneOrNone(sql, email);
+  return db.oneOrNone(sql, email);
 };
 // Crear un nuevo usuario
 User.create = (user) => {
-    const passwordEncrypted = crypto.createHash('md5').update(user.password).digest('hex');
-    user.password = passwordEncrypted;
+  const passwordEncrypted = crypto
+    .createHash("md5")
+    .update(user.password)
+    .digest("hex");
+  user.password = passwordEncrypted;
 
-    const sql = `
+  const sql = `
     INSERT INTO users (email, password, phone, name, image, is_available, lastname, session_token)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
     `;
 
-    const values = [
-        user.email,
-        user.password,
-        user.phone,
-        user.name,
-        user.image,
-        user.is_available,
-        user.lastname,
-        user.session_token
-    ];
+  const values = [
+    user.email,
+    user.password,
+    user.phone,
+    user.name,
+    user.image,
+    user.is_available,
+    user.lastname,
+    user.session_token,
+  ];
 
-    return db.one(sql, values);
+  return db.one(sql, values);
 };
 
 // Actualizar un usuario por ID
 User.update = (id, user) => {
-    const sql = `
+  const sql = `
     UPDATE users
     SET email = $1,
         password = $2,
@@ -135,37 +137,40 @@ User.update = (id, user) => {
     WHERE id = $9 RETURNING id
     `;
 
-    const values = [
-        user.email,
-        user.password,
-        user.phone,
-        user.name,
-        user.image,
-        user.is_available,
-        user.lastname,
-        user.session_token,
-        id
-    ];
+  const values = [
+    user.email,
+    user.password,
+    user.phone,
+    user.name,
+    user.image,
+    user.is_available,
+    user.lastname,
+    user.session_token,
+    id,
+  ];
 
-    return db.oneOrNone(sql, values);
+  return db.oneOrNone(sql, values);
 };
 
 // Eliminar un usuario por ID
 User.delete = (id) => {
-    const sql = `
+  const sql = `
     DELETE FROM users WHERE id = $1 RETURNING id
     `;
 
-    return db.oneOrNone(sql, [id]);
+  return db.oneOrNone(sql, [id]);
 };
 
 // Comparar la contraseña proporcionada con la contraseña encriptada
-User.isPasswordMatched = (userPassword , hash) => {
-    const myPasswordHashed = crypto.createHash('md5').update(userPassword).digest('hex');
-    if(myPasswordHashed === hash) {
-        return true;
-    }
-    return false;
-}
+User.isPasswordMatched = (userPassword, hash) => {
+  const myPasswordHashed = crypto
+    .createHash("md5")
+    .update(userPassword)
+    .digest("hex");
+  if (myPasswordHashed === hash) {
+    return true;
+  }
+  return false;
+};
 
 module.exports = User;
