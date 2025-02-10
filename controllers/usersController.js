@@ -2,6 +2,8 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const Roles = require("../models/roles");
+const storage = require("../utils/cloud_storage");
+const { urlencoded } = require("express");
 
 const UsersController = {};
 
@@ -55,7 +57,41 @@ UsersController.create = async (req, res) => {
   const user = req.body;
   try {
     const newUser = await User.create(user);
-    await Roles.create(newUser.id, 1); //cuando se registra un usuario el rol por defecto es USUARIO
+    await Roles.create(newUser.id, 1); //cuando se registra un usuario el rol por defecto es CLIENTE
+    res.status(201).json({
+      success: true,
+      message: "Usuario creado exitosamente",
+      data: { id: newUser.id },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al crear el usuario",
+      data: null,
+    });
+  }
+};
+
+// Crear un nuevo usuario
+UsersController.registerWithImage = async (req, res) => {
+  try {
+    const user = JSON.parse(req.body.user);
+    console.log(`Datos del usuario: ${user}`);
+
+    const files = req.files;
+
+    if(files.lenght > 0) {
+      const pathImage = `image_${Date.now}`; //nombre del archivo
+      const url = await storage(files[0], pathImage);
+
+      if(url =! undefined && url!= null) {
+        user.image = url;
+      }
+    }
+
+    const newUser = await User.create(user);
+
+    await Roles.create(newUser.id, 1); //cuando se registra un usuario el rol por defecto es CLIENTE
     res.status(201).json({
       success: true,
       message: "Usuario creado exitosamente",

@@ -3,9 +3,24 @@ const app = express();
 const http = require("http");
 const cors = require("cors");
 const logger = require("morgan");
+const multer = require("multer");
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
 
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
+
+/*
+ * INICIALIZAR FIREBASE ADMIN
+ */
+admin.initializeApp({
+  credential : admin.credential.cert(serviceAccount) //archivo de configuraciones con firebase
+})
+
+const upload = multer({
+  storage: multer.memoryStorage() //sirve para recibir en userRoutes una ruta para subir a firebase
+})
+
 
 /*
  * RUTAS
@@ -30,7 +45,7 @@ app.set("port", port);
 /*
  * Llamando a las rutas
  */
-users(app);
+users(app, upload);
 
 // Iniciar el servidor y escuchar en el puerto especificado
 server.listen(port, "192.168.100.33", () => {
