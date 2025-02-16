@@ -114,48 +114,6 @@ UsersController.registerWithImage = async (req, res) => {
 };
 
 //Actualizar perfil del cliente
-/*UsersController.updateProfile = async (req, res) => {
-  try {
-    const user = JSON.parse(req.body.user);
-    console.log(`Datos del usuario a actualizar:, ${JSON.stringify}`);
-
-    let updatedUser = { ...user };
-
-    // Si hay una nueva imagen, se sube y se actualiza el campo
-    if (req.file) {
-      const pathImage = `image_${Date.now()}`;
-      const url = await storage(req.file, pathImage);
-      if (url) {
-        updatedUser.image = url;
-      }
-    }
-
-    // Se llama a la función para actualizar el usuario
-    const result = await User.update(updatedUser);
-
-    // Validación si el usuario se encontró y se actualizó
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: "Usuario no encontrado",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Perfil actualizado correctamente",
-      data: result,
-    });
-  } catch (error) {
-    console.error("Error al actualizar el perfil:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error al actualizar el perfil",
-      error: error.message,
-    });
-  }
-};*/
-
 UsersController.updateProfile = async (req, res) => {
   try {
     const user = JSON.parse(req.body.user);
@@ -283,17 +241,17 @@ UsersController.login = async (req, res) => {
   }
 };
 
-// Actualizar un usuario por ID
-/*UsersController.update = async (req, res) => {
-  const { id } = req.params;
-  const user = req.body;
+// Obtener un usuario por ID
+UsersController.getById = async (req, res) => {
+  const id = req.params.id;
   try {
-    const updatedUser = await User.update(id, user);
-    if (updatedUser) {
+    const user = await User.findUserById(id);
+    
+    if (user) {
       res.status(200).json({
         success: true,
-        message: "Usuario actualizado exitosamente",
-        data: null,
+        message: "Usuario obtenido",
+        data: user,
       });
     } else {
       res.status(404).json({
@@ -305,11 +263,11 @@ UsersController.login = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error al actualizar el usuario",
+      message: "Error al obtener el usuario por ID",
       data: null,
     });
   }
-};*/
+};
 
 // Eliminar un usuario por ID
 UsersController.delete = async (req, res) => {

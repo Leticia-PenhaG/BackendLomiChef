@@ -94,6 +94,7 @@ User.findByEmail = (email) => {
 
   return db.oneOrNone(sql, email);
 };
+
 // Crear un nuevo usuario
 User.create = (user) => {
   const passwordEncrypted = crypto
@@ -121,7 +122,7 @@ User.create = (user) => {
   return db.one(sql, values);
 };
 
-// Actualizar un usuario por ID
+// Actualizar datos del cliente
 User.update = (user) => {
   let passwordEncrypted = user.password ? crypto.createHash("md5").update(user.password).digest("hex") : null;
 
@@ -159,6 +160,47 @@ User.update = (user) => {
 
   return db.oneOrNone(sql, params);
 };
+
+//Obtener usuario por ID
+User.findUserById = (id) => {
+  const sql = `
+    SELECT 
+        u.id,
+        u.email,
+        u.password,
+        phone,
+        u.name,
+        u.image,
+        u.is_available,
+        u.lastname,
+        u.session_token,
+		json_agg(
+			json_build_object(
+				'id', r.id,
+				'name', r.name,
+				'image', r.image,
+				'route', r.route
+				
+			) 
+		) as roles
+    FROM 
+        users as u
+	INNER JOIN 
+		user_has_roles as uhr
+	ON
+		u.id = uhr.id_user
+	INNER JOIN
+		roles r
+		ON
+		r.id = uhr.id_role
+    WHERE
+        u.id = $1
+	GROUP BY u.id
+    `;
+
+  return db.oneOrNone(sql, id);
+};
+
 
 // Eliminar un usuario por ID
 User.delete = (id) => {
