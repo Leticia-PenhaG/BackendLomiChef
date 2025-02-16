@@ -5,9 +5,10 @@ module.exports = (app, upload) => {
   app.get("/api/users/getById/:id", UsersController.getById);
   //app.post("/api/users/create", upload.array('image',1), UsersController.registerWithImage);
   app.post("/api/users/create", upload.single('image'), UsersController.registerWithImage);
-  app.put("/api/users/update/:id", UsersController.update);
+  //app.put("/api/users/update/:id", UsersController.update);
+  app.put("/api/users/update", upload.single("image"), UsersController.updateProfile);
   app.delete("/api/users/delete/:id", UsersController.delete);
-  app.post("/api/users/login", UsersController.login);
+  app.post("/api/users/login", UsersController.login)
 };
 
   //app.post("/api/users/create", upload.single('image'), UsersController.registerWithImage);

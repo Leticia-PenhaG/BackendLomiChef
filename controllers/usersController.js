@@ -73,46 +73,6 @@ UsersController.create = async (req, res) => {
 };
 
 // Crear un nuevo usuario
-/*UsersController.registerWithImage = async (req, res) => {
-  try {
-    const user = JSON.parse(req.body.user);
-    console.log(`Datos del usuario: ${user}`);
-
-    const files = req.files;
-
-    if (!files || files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "No se envió ninguna imagen",
-      });
-    }
-
-    if(files.length > 0) {
-      const pathImage = `image_${Date.now}`; //nombre del archivo
-      const url = await storage(files[0], pathImage);
-
-      if(url =! undefined && url!= null) {
-        user.image = url;
-      }
-    }
-
-    const newUser = await User.create(user);
-
-    await Roles.create(newUser.id, 1); //cuando se registra un usuario el rol por defecto es CLIENTE
-    res.status(201).json({
-      success: true,
-      message: "Usuario creado exitosamente",
-      data: { id: newUser.id },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error al crear el usuario",
-      data: null,
-    });
-  }
-};*/
-
 UsersController.registerWithImage = async (req, res) => {
   try {
     console.log('Archivos recibidos:', req.file); // Esto debería mostrar el archivo de imagen
@@ -127,9 +87,9 @@ UsersController.registerWithImage = async (req, res) => {
       });
     }
 
-    // Procesar la imagen (almacenarla en el servidor o en un servicio de almacenamiento)
+    // Almacenar la imagen en firebase
     const pathImage = `image_${Date.now()}`;
-    const url = await storage(req.file, pathImage); // Asegúrate de que storage sea la función correcta para manejar la imagen
+    const url = await storage(req.file, pathImage); 
     
     if (url) {
       user.image = url;
@@ -153,48 +113,96 @@ UsersController.registerWithImage = async (req, res) => {
   }
 };
 
-
-/*UsersController.registerWithImage = async (req, res) => {
+//Actualizar perfil del cliente
+/*UsersController.updateProfile = async (req, res) => {
   try {
-    const user = JSON.parse(req.body.user); // Aquí estás pasando el objeto JSON de usuario
-    const file = req.file; // Usamos 'file' ya que es un solo archivo
+    const user = JSON.parse(req.body.user);
+    console.log(`Datos del usuario a actualizar:, ${JSON.stringify}`);
 
-    if (!file) {
-      return res.status(400).json({
+    let updatedUser = { ...user };
+
+    // Si hay una nueva imagen, se sube y se actualiza el campo
+    if (req.file) {
+      const pathImage = `image_${Date.now()}`;
+      const url = await storage(req.file, pathImage);
+      if (url) {
+        updatedUser.image = url;
+      }
+    }
+
+    // Se llama a la función para actualizar el usuario
+    const result = await User.update(updatedUser);
+
+    // Validación si el usuario se encontró y se actualizó
+    if (!result) {
+      return res.status(404).json({
         success: false,
-        message: "No se envió ninguna imagen",
+        message: "Usuario no encontrado",
       });
     }
 
-    // Guardar la imagen en Firebase o donde lo necesites
-    const pathImage = `image_${Date.now()}`; 
-    const url = await storage(file, pathImage);  // Función para almacenar la imagen
-
-    // Si tienes la URL de la imagen, asignarla al objeto usuario
-    user.image = url;
-
-    // Crear el usuario con la URL de la imagen
-    const newUser = await User.create(user);
-
-    // Asignar un rol por defecto
-    await Roles.create(newUser.id, 1); // Asumimos que '1' es el rol CLIENTE
-
-    return res.status(201).json({
+    res.status(200).json({
       success: true,
-      message: "Usuario creado exitosamente",
-      data: { id: newUser.id },
+      message: "Perfil actualizado correctamente",
+      data: result,
     });
-
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
+    console.error("Error al actualizar el perfil:", error);
+    res.status(500).json({
       success: false,
-      message: "Error al crear el usuario",
-      data: null,
+      message: "Error al actualizar el perfil",
+      error: error.message,
+    });
+  }
+};*/
+
+UsersController.updateProfile = async (req, res) => {
+  try {
+    const user = JSON.parse(req.body.user);
+    console.log(`Datos del usuario a actualizar:`, user);
+
+    let updatedUser = { ...user };
+
+    // Si hay una nueva imagen, se sube y se actualiza el campo
+    if (req.file) {
+      const pathImage = `image_${Date.now()}`;
+      const url = await storage(req.file, pathImage);
+      if (url) {
+        updatedUser.image = url;
+      }
+    }
+
+    // **Si la contraseña está vacía, la eliminamos para no afectar la consulta**
+    if (!updatedUser.password || updatedUser.password.trim() === "") {
+      delete updatedUser.password;
+    }
+
+    // Se llama a la función para actualizar el usuario
+    const result = await User.update(updatedUser);
+
+    // Validación si el usuario se encontró y se actualizó
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Perfil actualizado correctamente",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error al actualizar el perfil:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al actualizar el perfil",
+      error: error.message,
     });
   }
 };
-*/
+
 
 /// Maneja el inicio de sesión del usuario validando credenciales y generando un token JWT.
 ///
@@ -276,7 +284,7 @@ UsersController.login = async (req, res) => {
 };
 
 // Actualizar un usuario por ID
-UsersController.update = async (req, res) => {
+/*UsersController.update = async (req, res) => {
   const { id } = req.params;
   const user = req.body;
   try {
@@ -301,7 +309,7 @@ UsersController.update = async (req, res) => {
       data: null,
     });
   }
-};
+};*/
 
 // Eliminar un usuario por ID
 UsersController.delete = async (req, res) => {

@@ -122,34 +122,42 @@ User.create = (user) => {
 };
 
 // Actualizar un usuario por ID
-User.update = (id, user) => {
-  const sql = `
+User.update = (user) => {
+  let passwordEncrypted = user.password ? crypto.createHash("md5").update(user.password).digest("hex") : null;
+
+  // Construcción dinámica de la consulta SQL
+  let sql = `
     UPDATE users
-    SET email = $1,
-        password = $2,
+    SET email = $2,
         phone = $3,
         name = $4,
         image = $5,
-        is_available = $6,
-        lastname = $7,
-        session_token = $8,
+        lastname = $6,
         updated_at = CURRENT_TIMESTAMP
-    WHERE id = $9 RETURNING id
-    `;
+  `;
 
-  const values = [
-    user.email,
-    user.password,
-    user.phone,
-    user.name,
-    user.image,
-    user.is_available,
-    user.lastname,
-    user.session_token,
-    id,
-  ];
+  let params = [user.id, user.email, user.phone, user.name, user.image, user.lastname];
 
-  return db.oneOrNone(sql, values);
+  // Solo agrega la contraseña si está presente
+  if (passwordEncrypted) {
+    sql = `
+      UPDATE users
+      SET email = $2,
+          password = $3,
+          phone = $4,
+          name = $5,
+          image = $6,
+          lastname = $7,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING *`;
+    
+    params = [user.id, user.email, passwordEncrypted, user.phone, user.name, user.image, user.lastname];
+  } else {
+    sql += ` WHERE id = $1 RETURNING *`;
+  }
+
+  return db.oneOrNone(sql, params);
 };
 
 // Eliminar un usuario por ID
