@@ -94,6 +94,7 @@ User.findByEmail = (email) => {
 
   return db.oneOrNone(sql, email);
 };
+
 // Crear un nuevo usuario
 User.create = (user) => {
   const passwordEncrypted = crypto
@@ -121,36 +122,85 @@ User.create = (user) => {
   return db.one(sql, values);
 };
 
-// Actualizar un usuario por ID
-User.update = (id, user) => {
-  const sql = `
+// Actualizar datos del cliente
+User.update = (user) => {
+  let passwordEncrypted = user.password ? crypto.createHash("md5").update(user.password).digest("hex") : null;
+
+  // Construcción dinámica de la consulta SQL
+  let sql = `
     UPDATE users
-    SET email = $1,
-        password = $2,
+    SET email = $2,
         phone = $3,
         name = $4,
         image = $5,
-        is_available = $6,
-        lastname = $7,
-        session_token = $8,
+        lastname = $6,
         updated_at = CURRENT_TIMESTAMP
-    WHERE id = $9 RETURNING id
+  `;
+
+  let params = [user.id, user.email, user.phone, user.name, user.image, user.lastname];
+
+  // Solo agrega la contraseña si está presente
+  if (passwordEncrypted) {
+    sql = `
+      UPDATE users
+      SET email = $2,
+          password = $3,
+          phone = $4,
+          name = $5,
+          image = $6,
+          lastname = $7,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING *`;
+    
+    params = [user.id, user.email, passwordEncrypted, user.phone, user.name, user.image, user.lastname];
+  } else {
+    sql += ` WHERE id = $1 RETURNING *`;
+  }
+
+  return db.oneOrNone(sql, params);
+};
+
+//Obtener usuario por ID
+User.findUserById = (id) => {
+  const sql = `
+    SELECT 
+        u.id,
+        u.email,
+        u.password,
+        phone,
+        u.name,
+        u.image,
+        u.is_available,
+        u.lastname,
+        u.session_token,
+		json_agg(
+			json_build_object(
+				'id', r.id,
+				'name', r.name,
+				'image', r.image,
+				'route', r.route
+				
+			) 
+		) as roles
+    FROM 
+        users as u
+	INNER JOIN 
+		user_has_roles as uhr
+	ON
+		u.id = uhr.id_user
+	INNER JOIN
+		roles r
+		ON
+		r.id = uhr.id_role
+    WHERE
+        u.id = $1
+	GROUP BY u.id
     `;
 
-  const values = [
-    user.email,
-    user.password,
-    user.phone,
-    user.name,
-    user.image,
-    user.is_available,
-    user.lastname,
-    user.session_token,
-    id,
-  ];
-
-  return db.oneOrNone(sql, values);
+  return db.oneOrNone(sql, id);
 };
+
 
 // Eliminar un usuario por ID
 User.delete = (id) => {
