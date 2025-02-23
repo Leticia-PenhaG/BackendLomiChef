@@ -26,7 +26,7 @@ UsersController.getAll = async (req, res) => {
 };
 
 // Obtener un usuario por ID
-UsersController.getById = async (req, res) => {
+/*UsersController.getById = async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.getById(id);
@@ -50,7 +50,7 @@ UsersController.getById = async (req, res) => {
       data: null,
     });
   }
-};
+};*/
 
 // Crear un nuevo usuario
 UsersController.create = async (req, res) => {
@@ -278,6 +278,21 @@ UsersController.getById = async (req, res) => {
     });
   }
 };
+
+/*UsersController.getById = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const data = await User.findUserById(id);
+    return res.status(201).json(data);
+  }
+  catch (error) {
+    console.log(`Error: ${error}`);
+    return res.status(501).json({
+      success:false,
+      message:'Error al obtener el usuario por ID'
+    });
+  }
+};*/
 
 // Eliminar un usuario por ID
 UsersController.delete = async (req, res) => {

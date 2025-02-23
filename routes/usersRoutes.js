@@ -1,10 +1,17 @@
 const UsersController = require("../controllers/usersController");
+const passport = require('passport');
 
 module.exports = (app, upload) => {
+  //Obtener datos
   app.get("/api/users/getAll", UsersController.getAll);
-  app.get("/api/users/getById/:id", UsersController.getById);
+  app.get("/api/users/getById/:id", passport.authenticate('jwt', {session:false}), UsersController.getById); //se agrega control del token
+
+  //Guardar datos
   app.post("/api/users/create", upload.single('image'), UsersController.registerWithImage);
-  app.put("/api/users/update", upload.single("image"), UsersController.updateProfile);
-  app.delete("/api/users/delete/:id", UsersController.delete);
   app.post("/api/users/login", UsersController.login)
+
+  app.put("/api/users/update", passport.authenticate('jwt', {session:false}), upload.single("image"), UsersController.updateProfile); //se agrega control del token
+  
+  app.delete("/api/users/delete/:id", UsersController.delete);
+
 };

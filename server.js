@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session"); // Agregar esta línea
 const app = express();
 const http = require("http");
 const cors = require("cors");
@@ -6,6 +7,7 @@ const logger = require("morgan");
 const multer = require("multer");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
+const passport = require('passport');
 
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
@@ -26,6 +28,7 @@ const upload = multer({
  * RUTAS
  */
 const users = require("./routes/usersRoutes");
+const keys = require("./config/keys");
 
 const port = process.env.PORT || 3000;
 
@@ -37,7 +40,22 @@ app.use(
   })
 );
 
+
 app.use(cors());
+
+// Configurar express-session antes de passport.session()
+app.use(session({
+  secret: keys.secretOrKey,
+  resave: false,
+  saveUninitialized: false,
+}));
+
+//Se utiliza para el token de la sesión
+app.use(passport.initialize());
+app.use(passport.session());
+require('./config/passport')(passport);
+
+
 app.disable("x-powered-by");
 
 app.set("port", port);
