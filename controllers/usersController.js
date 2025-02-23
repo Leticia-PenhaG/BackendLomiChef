@@ -191,7 +191,7 @@ UsersController.login = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const actual_user = await User.findByEmail(email);
+    const actual_user = await User.findByEmail(email); //se obtiene usuario por email
 
     if (!actual_user) {
       return res.status(401).json({
@@ -200,13 +200,22 @@ UsersController.login = async (req, res) => {
       });
     }
 
+    // Se verifica si la contraseña ingresada coincide con la almacenada
     if (User.isPasswordMatched(password, actual_user.password)) {
+
+      //Si la contraseña es correcta, se genera un token JWT con los datos del usuario
       const token = jwt.sign(
-        { id: actual_user.id, email: actual_user.email },
-        keys.secretOrKey,
-        { expiresIn: "24h" } // Tiempo de expiración
+        { id: actual_user.id, email: actual_user.email }, // Payload del token (datos del usuario)
+        keys.secretOrKey, // Clave secreta para firmar el token
+        { expiresIn: "1h" } // Tiempo de expiración
       );
 
+      const sessionToken = `JWT ${token}`;
+
+      // Actualizar el token en la base de datos
+      await User.updateSessionToken(actual_user.id, sessionToken);
+
+      //Se construye un objeto con los datos del usuario que se enviarán en la respuesta
       const data = {
         id: actual_user.id,
         name: actual_user.name,
@@ -220,6 +229,7 @@ UsersController.login = async (req, res) => {
 
       console.log(`USUARIO ENVIADO: ${data}`);
 
+      // Se envía la respuesta con el usuario autenticado y el token
       return res.status(201).json({
         success: true,
         data: data,
@@ -235,7 +245,7 @@ UsersController.login = async (req, res) => {
     console.error(`Error: ${error}`);
     return res.status(500).json({
       success: false,
-      message: "Error al realizar el inicio de sesión",
+      message: "Error al iniciar la sesión",
       error: error.message,
     });
   }
