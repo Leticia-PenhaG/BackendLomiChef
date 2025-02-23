@@ -6,6 +6,8 @@ const logger = require("morgan");
 const multer = require("multer");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
+const passport = require('passport');
+const passportConfig = require('./config/passport');
 
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
@@ -21,11 +23,17 @@ const upload = multer({
   storage: multer.memoryStorage() //sirve para recibir en userRoutes una ruta para subir a firebase
 })
 
+// Inicialización passport
+app.use(passport.initialize());
+
+// Configuración passport (esto ejecuta la configuración que tienes en passport.js)
+passportConfig(passport);
 
 /*
  * RUTAS
  */
-const users = require("./routes/usersRoutes");
+const users = require('./routes/usersRoutes');
+const categories = require('./routes/categoriesRoutes');
 
 const port = process.env.PORT || 3000;
 
@@ -46,6 +54,7 @@ app.set("port", port);
  * Llamando a las rutas
  */
 users(app, upload);
+categories(app);
 
 // Iniciar el servidor y escuchar en el puerto especificado
 server.listen(port, "192.168.100.33", () => {
