@@ -207,7 +207,7 @@ UsersController.login = async (req, res) => {
       const token = jwt.sign(
         { id: actual_user.id, email: actual_user.email }, // Payload del token (datos del usuario)
         keys.secretOrKey, // Clave secreta para firmar el token
-        { expiresIn: "1h" } // Tiempo de expiración
+        { expiresIn: (60 * 10) } // Tiempo de expiración del token
       );
 
       const sessionToken = `JWT ${token}`;
@@ -279,17 +279,46 @@ UsersController.getById = async (req, res) => {
   }
 };
 
-/*UsersController.getById = async (req, res, next) => {
+//Se vuelve a colocar null el token cuando caduca o se cierra la sesión 
+UsersController.logout = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const data = await User.findUserById(id);
-    return res.status(201).json(data);
+    const id = req.body.id; // req.user.id si el ID está en el token JWT
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "ID de usuario no proporcionado",
+      });
+    }
+
+    await User.updateSessionToken(id, null);
+
+    return res.status(200).json({
+      success: true,
+      message: "La sesión del usuario se cerró correctamente",
+    });
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return res.status(500).json({
+      success: false,
+      message: "Error al cerrar sesión",
+    });
+  }
+};
+
+/*UsersController.logout = async (req, res, next) => {
+  try {
+    const id = req.body.id;     //req.user.id si el ID está en el token JWT
+    await User.updateSessionToken(id, null);
+    return res.status(501).json({
+      success:true,
+      message:'La sesión del usuario se cerró correctamente'
+    });
   }
   catch (error) {
     console.log(`Error: ${error}`);
     return res.status(501).json({
       success:false,
-      message:'Error al obtener el usuario por ID'
+      message:'Error al cerrar sesión'
     });
   }
 };*/
