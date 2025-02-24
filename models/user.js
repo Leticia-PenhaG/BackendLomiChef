@@ -223,4 +223,15 @@ User.isPasswordMatched = (userPassword, hash) => {
   return false;
 };
 
+//Función para actualizar el token en la base de datos
+User.updateSessionToken = (userId, sessionToken) => {
+  const sql = `
+    UPDATE users 
+    SET session_token = $1 
+    WHERE id = $2
+  `;
+
+  return db.none(sql, [sessionToken, userId]);
+};
+
 module.exports = User;
