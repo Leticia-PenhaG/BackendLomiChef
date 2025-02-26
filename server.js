@@ -1,5 +1,5 @@
 const express = require("express");
-const session = require("express-session"); // Agregar esta línea
+const session = require("express-session"); 
 const app = express();
 const http = require("http");
 const cors = require("cors");
@@ -7,7 +7,6 @@ const logger = require("morgan");
 const multer = require("multer");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
-const passport = require('passport');
 const passport = require('passport');
 const passportConfig = require('./config/passport');
 
@@ -25,10 +24,8 @@ const upload = multer({
   storage: multer.memoryStorage() //sirve para recibir en userRoutes una ruta para subir a firebase
 })
 
-// Inicialización passport
 app.use(passport.initialize());
 
-// Configuración passport (esto ejecuta la configuración que tienes en passport.js)
 passportConfig(passport);
 
 /*
