@@ -214,6 +214,8 @@ UsersController.login = async (req, res) => {
 
       // Actualizar el token en la base de datos
       await User.updateSessionToken(actual_user.id, sessionToken);
+      console.log(`Longitud del token: ${sessionToken.length}`);
+
 
       //Se construye un objeto con los datos del usuario que se enviarán en la respuesta
       const data = {
