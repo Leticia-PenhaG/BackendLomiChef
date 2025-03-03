@@ -73,7 +73,7 @@ UsersController.create = async (req, res) => {
 };
 
 // Crear un nuevo usuario
-UsersController.registerWithImage = async (req, res) => {
+/*UsersController.registerWithImage = async (req, res) => {
   try {
     console.log('Archivos recibidos:', req.file); // Esto debería mostrar el archivo de imagen
     const user = JSON.parse(req.body.user);
@@ -97,6 +97,58 @@ UsersController.registerWithImage = async (req, res) => {
 
     const newUser = await User.create(user);
     await Roles.create(newUser.id, 1);
+
+    res.status(201).json({
+      success: true,
+      message: "Usuario creado exitosamente",
+      data: { id: newUser.id },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error al crear el usuario",
+      data: null,
+    });
+  }
+};*/
+
+
+// Crear un nuevo usuario
+UsersController.registerWithImage = async (req, res) => {
+  try {
+    console.log('Archivos recibidos:', req.file); // Esto debería mostrar el archivo de imagen
+    const user = JSON.parse(req.body.user);
+    console.log('Datos del usuario:', user);
+
+    const files = req.files;
+    
+    // Procesar la imagen y los datos del usuario
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No se envió ninguna imagen",
+      });
+    }
+
+    if(files.length > 0) {
+      // Almacenar la imagen en firebase
+      const pathImage = `image_${Date.now()}`;
+
+      //const url = await storage(req.file, pathImage); 
+      const url = await storage(files[0], pathImage); 
+
+        /*if (url) {
+          user.image = url;
+        }*/
+
+          if(url != undefined && url != null) {
+            user.image = url;
+          }
+      }
+
+    const newUser = await User.create(user);
+    await Roles.create(newUser.id, 1); //ROL POR DEFECTO (CLIENTE)
 
     res.status(201).json({
       success: true,

@@ -147,16 +147,16 @@ CREATE TABLE addresses (
 
 CREATE TABLE products (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(180),
-    description VARCHAR(255),
-    price DECIMAL(10,2),
-    image1 VARCHAR(255),
-    image2 VARCHAR(255),
-    image3 VARCHAR(255),
-    id_category BIGINT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_category) REFERENCES categories(id) ON DELETE SET NULL
+    name VARCHAR(180) NOT NULL UNIQUE,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL DEFAULT 0,
+    image1 VARCHAR(255) NOT NULL,
+    image2 VARCHAR(255) NULL,
+    image3 VARCHAR(255) NULL,
+    id_category BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (id_category) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE orders (
