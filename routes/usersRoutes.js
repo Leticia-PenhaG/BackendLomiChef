@@ -7,7 +7,8 @@ module.exports = (app, upload) => {
   app.get("/api/users/getById/:id", passport.authenticate('jwt', {session:false}), UsersController.getById); //se agrega control del token para que solo usuarios autenticados y con token válido puedan realizar estas llamadas
 
   //Guardar datos
-  app.post("/api/users/create", upload.single('image'), UsersController.registerWithImage);
+  app.post("/api/users/create", upload.array('image', 1), UsersController.registerWithImage);
+  //app.post("/api/users/create", upload.single('image'), UsersController.registerWithImage);
   app.post("/api/users/login", UsersController.login)
 
   app.put("/api/users/update", passport.authenticate('jwt', {session:false}), upload.single("image"), UsersController.updateProfile); //se agrega control del token
