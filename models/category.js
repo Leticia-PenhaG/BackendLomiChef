@@ -2,6 +2,21 @@ const db = require('../config/config');
 
 const Category = {};  // Definición del objeto Category
 
+Category.getAll = () => {
+    const sql = `
+        SELECT 
+            id,
+            name,
+            description
+        FROM 
+            categories
+        ORDER BY
+            name
+    `;
+
+    return db.manyOrNone(sql);
+}
+
 // Se agrega el método create dentro del objeto
 Category.create = (category) => {
     const sql = `
