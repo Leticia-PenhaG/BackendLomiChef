@@ -5,7 +5,7 @@ const Product = {};
 Product.create = (product) => {
     const sql = `
         INSERT INTO
-            product(
+            products(
                 name,
                 description,
                 price,
@@ -16,7 +16,7 @@ Product.create = (product) => {
                 created_at,
                 updated_at
             )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING     
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id
     `;
 
     return db.oneOrNone(sql, [
