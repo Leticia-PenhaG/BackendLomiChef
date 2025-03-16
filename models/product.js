@@ -44,7 +44,7 @@ Product.update = (product) => {
         image2 = $6,
         image3 = $7,
         id_category = $8,
-        updated_at = $9,
+        updated_at = $9
     WHERE
         id = $1
     `;
