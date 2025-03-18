@@ -12,7 +12,13 @@ module.exports = (app) => {
     * POST ROUTES
     */
 
-    app.post('/api/products/create', passport.authenticate('jwt', {session: false}), upload.array('image', 3), ProductsController.create); //para crear el producto
+    app.post('/api/products/create', passport.authenticate('jwt', { session: false }), upload.array('images', 3), ProductsController.create);
+
+
+    //app.post('/api/products/create', passport.authenticate('jwt', { session: false }), upload.array('images', 3), ProductsController.create);
+
+
+    //app.post('/api/products/create', passport.authenticate('jwt', {session: false}), upload.array('image', 3), ProductsController.create); //para crear el producto
 }
 
 // const ProductsController = require('../controllers/productsController');
