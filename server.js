@@ -34,6 +34,8 @@ passportConfig(passport);
 const users = require('./routes/usersRoutes');
 const categories = require('./routes/categoriesRoutes');
 const products = require('./routes/productsRoutes');
+const address = require('./routes/addressRoutes');
+
 const keys = require("./config/keys");
 
 const port = process.env.PORT || 3000;
@@ -72,6 +74,7 @@ app.set("port", port);
 users(app, upload);
 categories(app);
 products(app, upload);
+address(app);
 
 // Iniciar el servidor y escuchar en el puerto especificado
 server.listen(port, "192.168.100.5", () => {
