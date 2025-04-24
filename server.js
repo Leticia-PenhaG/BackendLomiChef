@@ -1,5 +1,5 @@
 const express = require("express");
-const session = require("express-session"); // Agregar esta línea
+const session = require("express-session"); 
 const app = express();
 const http = require("http");
 const cors = require("cors");
@@ -8,6 +8,7 @@ const multer = require("multer");
 const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 const passport = require('passport');
+const passportConfig = require('./config/passport');
 
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
@@ -23,11 +24,18 @@ const upload = multer({
   storage: multer.memoryStorage() //sirve para recibir en userRoutes una ruta para subir a firebase
 })
 
+app.use(passport.initialize());
+
+passportConfig(passport);
 
 /*
  * RUTAS
  */
-const users = require("./routes/usersRoutes");
+const users = require('./routes/usersRoutes');
+const categories = require('./routes/categoriesRoutes');
+const products = require('./routes/productsRoutes');
+const address = require('./routes/addressRoutes');
+
 const keys = require("./config/keys");
 
 const port = process.env.PORT || 3000;
@@ -64,13 +72,23 @@ app.set("port", port);
  * Llamando a las rutas
  */
 users(app, upload);
+categories(app);
+products(app, upload);
+address(app);
 
 // Iniciar el servidor y escuchar en el puerto especificado
-server.listen(port, "192.168.100.33", () => {
+server.listen(port, "192.168.100.5", () => {
   console.log(
-    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en http://192.168.100.33:${port}`
+    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en http://192.168.100.5:${port}`
   );
 });
+
+// Iniciar el servidor y escuchar en el puerto especificado
+/*server.listen(port, "0.0.0.0", () => {
+  console.log(
+    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en el puerto ${port}`
+  );
+});*/
 
 //Error Handler
 app.use((err, req, res, next) => {
