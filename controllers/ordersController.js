@@ -7,10 +7,13 @@ module.exports = {
   async createOrder(req, res, next) {
     try {
       const order = req.body;
+      order.status = 'PAGADO';
       const data = await Order.create(order);
 
+      console.log('La orden se creó correctamente');
+
       //Se recorren todos los productos agregados a la orden
-      for (const product of order.products) {
+      for (const product of order.products) { //este order.products va en el modelo
         console.log('Producto recibido:', product); 
       
         if (!product.id) {
