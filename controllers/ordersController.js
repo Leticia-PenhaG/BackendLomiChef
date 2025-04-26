@@ -6,7 +6,7 @@ module.exports = {
   // Crear una nueva orden
   async createOrder(req, res, next) {
     try {
-      const order = req.body;
+      let order = req.body;
       order.status = 'PAGADO';
       const data = await Order.create(order);
 
