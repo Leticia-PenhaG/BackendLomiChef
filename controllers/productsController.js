@@ -127,6 +127,46 @@ module.exports = {
           error: error
         });
       }
-    }
+    },
+
+      // NUEVO: ACTUALIZAR PRODUCTO
+      async update(req, res) {
+        try {
+          const product = req.body;
+          await Product.update(product);
+  
+          return res.status(201).json({
+            success: true,
+            message: 'Producto actualizado correctamente'
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ 
+            success: false, 
+            message: 'Error al actualizar el producto',
+            error: error
+          });
+        }
+      },
+  
+      // NUEVO: ELIMINAR PRODUCTO
+      async delete(req, res) {
+        try {
+          const id = req.params.id;
+          await Product.delete(id);
+  
+          return res.status(201).json({
+            success: true,
+            message: 'Producto eliminado correctamente'
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ 
+            success: false, 
+            message: 'Error al eliminar el producto',
+            error: error
+          });
+        }
+      }
 }
   

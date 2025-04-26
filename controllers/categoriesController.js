@@ -39,5 +39,44 @@ module.exports = {
                 error:error
             });
         }
+    },
+    // NUEVO: EDITAR CATEGORÍA
+    async update(req, res, next) {
+        try {
+            const category = req.body;
+            await Category.update(category);
+
+            return res.status(201).json({
+                message:'Se actualizó la categoría correctamente',
+                success:true
+            });
+        } catch(error) {
+            console.log(`Error: ${error}`);
+            return res.status(501).json({
+                message:'Ocurrió un error al actualizar la categoría',
+                success:false,
+                error:error
+            });
+        }
+    },
+
+    // NUEVO: ELIMINAR CATEGORÍA
+    async delete(req, res, next) {
+        try {
+            const id = req.params.id;
+            await Category.delete(id);
+
+            return res.status(201).json({
+                message:'Se eliminó la categoría correctamente',
+                success:true
+            });
+        } catch(error) {
+            console.log(`Error: ${error}`);
+            return res.status(501).json({
+                message:'Ocurrió un error al eliminar la categoría',
+                success:false,
+                error:error
+            });
+        }
     }
 }

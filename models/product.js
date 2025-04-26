@@ -84,4 +84,15 @@ Product.update = (product) => {
     ]);
 }
 
+// ELIMINAR PRODUCTO
+Product.delete = (id) => {
+    const sql = `
+    DELETE FROM 
+        products
+    WHERE 
+        id = $1
+    `;
+    return db.none(sql, id);
+};
+
 module.exports = Product;

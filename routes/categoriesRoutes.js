@@ -15,4 +15,7 @@ module.exports = (app) => {
     */
 
     app.post('/api/categories/create', passport.authenticate('jwt', {session: false}), CategoriesController.create); //es necesario que el usuario envíe el token
+
+    app.put('/api/categories/update',  passport.authenticate('jwt', {session: false}),  CategoriesController.update); 
+    app.delete('/api/categories/delete/:id', passport.authenticate('jwt', {session: false}),  CategoriesController.delete); 
 }
