@@ -27,7 +27,7 @@ Order.create = async (order) => {
   ]);
 };
 
-Order.findByStatus = async (status) => {
+/*Order.findByStatus = async (status) => {
   const sql = `
     SELECT O.id,
       O.id_client,
@@ -56,6 +56,36 @@ Order.findByStatus = async (status) => {
     WHERE status = $1;
   `;
   return db.manyOrNone(sql, [status]);  
+};*/
+
+Order.findByStatus = async (status) => {
+  const sql = `
+    SELECT O.id,
+      O.id_client,
+      O.id_address,
+      O.id_delivery,
+      O.status,
+      O.timestamp,
+      JSON_BUILD_OBJECT(
+        'id', U.id,
+        'name', U.name,
+        'lastname', U.lastname,
+        'image', U.image
+      ) AS client,
+      JSON_BUILD_OBJECT(
+        'id', A.id,
+        'address', A.address,
+        'neighborhood', A.neighborhood,
+        'lat', A.lat,
+        'lng', A.lng
+      ) AS address
+    FROM orders O
+    INNER JOIN users U ON O.id_client = U.id
+    INNER JOIN address A ON A.id = O.id_address
+    WHERE status = $1;
+  `;
+
+  return db.manyOrNone(sql, [status]); // nada de JSON.stringify manual
 };
 
 module.exports = Order;
