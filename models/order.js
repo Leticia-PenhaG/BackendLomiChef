@@ -27,7 +27,7 @@ Order.create = async (order) => {
   ]);
 };
 
-Order.findByStatus = async (status) => {
+/*Order.findByStatus = async (status) => {
   const sql = `
     SELECT O.id,
       O.id_client,
@@ -55,8 +55,9 @@ Order.findByStatus = async (status) => {
   `;
 
   return db.manyOrNone(sql, [status]); // nada de JSON.stringify manual
-};
+};*/
 
+// Busca órdenes por estado e incluye cliente, dirección y productos en formato JSON.
 Order.findByStatus = async (status) => {
   const sql = `
     SELECT O.id,
