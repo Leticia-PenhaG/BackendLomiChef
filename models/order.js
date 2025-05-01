@@ -27,37 +27,6 @@ Order.create = async (order) => {
   ]);
 };
 
-/*Order.findByStatus = async (status) => {
-  const sql = `
-    SELECT O.id,
-      O.id_client,
-      O.id_address,
-      O.id_delivery,
-      O.status,
-      O.timestamp,
-      JSON_BUILD_OBJECT(
-        'id', U.id,
-        'name', U.name,
-        'lastname', U.lastname,
-        'image', U.image
-      ) AS client,
-      JSON_BUILD_OBJECT(
-        'id', A.id,
-        'address', A.address,
-        'neighborhood', A.neighborhood,
-        'lat', A.lat,
-        'lng', A.lng
-      ) AS address
-    FROM orders O
-    INNER JOIN users U
-    ON O.id_client = U.id
-    INNER JOIN address A
-    ON A.id = O.id_address
-    WHERE status = $1;
-  `;
-  return db.manyOrNone(sql, [status]);  
-};*/
-
 Order.findByStatus = async (status) => {
   const sql = `
     SELECT O.id,
@@ -83,6 +52,55 @@ Order.findByStatus = async (status) => {
     INNER JOIN users U ON O.id_client = U.id
     INNER JOIN address A ON A.id = O.id_address
     WHERE status = $1;
+  `;
+
+  return db.manyOrNone(sql, [status]); // nada de JSON.stringify manual
+};
+
+Order.findByStatus = async (status) => {
+  const sql = `
+    SELECT O.id,
+      O.id_client,
+      O.id_address,
+      O.id_delivery,
+      O.status,
+      O.timestamp,
+	  JSON_AGG(
+		JSON_BUILD_OBJECT(
+			'id', P.id,
+			'name', P.name,
+			'description', P.description,
+			'price', P.price,
+			'image1', P.image1,
+			'image2', P.image2,
+			'image3', P.image3,	
+			'quantity', OHP.quantity
+		)
+	  ) AS PRODUCTS,
+	  
+      JSON_BUILD_OBJECT(
+        'id', U.id,
+        'name', U.name,
+        'lastname', U.lastname,
+        'image', U.image
+      ) AS client,
+      JSON_BUILD_OBJECT(
+        'id', A.id,
+        'address', A.address,
+        'neighborhood', A.neighborhood,
+        'lat', A.lat,
+        'lng', A.lng
+      ) AS address
+    FROM orders O
+      INNER JOIN users U ON O.id_client = U.id
+      INNER JOIN address A ON A.id = O.id_address
+      INNER JOIN orders_has_products OHP
+      ON OHP.id_order = O.id
+      INNER JOIN products P
+      ON P.id = OHP.id_product
+        WHERE status = '$1'
+      GROUP BY 
+      O.id, U.id, A.id;
   `;
 
   return db.manyOrNone(sql, [status]); // nada de JSON.stringify manual
