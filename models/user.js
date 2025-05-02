@@ -95,6 +95,34 @@ User.findByEmail = (email) => {
   return db.oneOrNone(sql, email);
 };
 
+User.loadCouriers = () => {
+  const sql = `
+   SELECT 
+        u.id,
+        u.email,
+        u.name,
+        u.lastname,
+        u.image,
+        u.phone,
+        u.password,
+        u.session_token
+		FROM 
+      users U 
+    INNER JOIN 
+      user_has_roles UHR
+    ON 
+      U.id = UHR.id_user
+    INNER JOIN 
+      roles R
+    ON
+      R.id = UHR.id_role
+    WHERE
+        R.id = 3
+    `;
+
+  return db.manyOrNone(sql);
+};
+
 // Crear un nuevo usuario
 User.create = (user) => {
   const passwordEncrypted = crypto

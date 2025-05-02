@@ -5,6 +5,7 @@ module.exports = (app, upload) => {
   //Obtener datos
   app.get("/api/users/getAll", UsersController.getAll);
   app.get("/api/users/getById/:id", passport.authenticate('jwt', {session:false}), UsersController.getById); //se agrega control del token para que solo usuarios autenticados y con token válido puedan realizar estas llamadas
+  app.get("/api/users/loadCouriers", passport.authenticate('jwt', {session:false}), UsersController.loadCouriers); //para listar repartidores
 
   //Guardar datos
   app.post("/api/users/create", upload.single('image'), UsersController.registerWithImage);

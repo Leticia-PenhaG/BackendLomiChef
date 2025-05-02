@@ -350,4 +350,31 @@ UsersController.delete = async (req, res) => {
   }
 };
 
+UsersController.loadCouriers = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await User.loadCouriers(id);
+    
+    if (user) {
+      res.status(200).json({
+        success: true,
+        message: "Usuario obtenido",
+        data: user,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+        data: null,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener los repartidores",
+      data: null,
+    });
+  }
+};
+
 module.exports = UsersController;
