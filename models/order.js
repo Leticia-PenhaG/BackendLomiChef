@@ -99,7 +99,7 @@ Order.findByStatus = async (status) => {
       ON OHP.id_order = O.id
       INNER JOIN products P
       ON P.id = OHP.id_product
-        WHERE status = '$1'
+        WHERE status = $1
       GROUP BY 
       O.id, U.id, A.id;
   `;
