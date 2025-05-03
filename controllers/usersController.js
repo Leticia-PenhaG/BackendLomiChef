@@ -207,7 +207,7 @@ UsersController.login = async (req, res) => {
       const token = jwt.sign(
         { id: actual_user.id, email: actual_user.email }, // Payload del token (datos del usuario)
         keys.secretOrKey, // Clave secreta para firmar el token
-        { expiresIn: (60 * 15) } // Tiempo de expiración del token
+        { expiresIn: (60 * 10000) } // Tiempo de expiración del token
       );
 
       const sessionToken = `JWT ${token}`;

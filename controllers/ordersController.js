@@ -56,77 +56,6 @@ module.exports = {
     }
   },
 
-  // Actualizar una orden existente
-  /*async updateOrderStatus(req, res, next) {
-    try {
-      const { id, status } = req.body;
-  
-      if (!id || !status) {
-        return res.status(400).json({
-          success: false,
-          message: 'El ID de la orden y el nuevo estado son requeridos',
-        });
-      }
-  
-      // Validar que el estado sea uno de los permitidos
-      const validStatuses = ['Pagado', 'Listo para envío', 'En ruta', 'Entrega completada'];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({
-          success: false,
-          message: 'Estado inválido',
-        });
-      }
-  
-      const order = { id, status };
-      await Order.update(order); // Suponiendo que tu función update solo actualiza campos presentes
-  
-      return res.status(200).json({
-        success: true,
-        message: 'El estado de la orden se actualizó correctamente',
-      });
-  
-    } catch (error) {
-      console.error(`Error al actualizar el estado: ${error}`);
-      return res.status(500).json({
-        success: false,
-        message: 'Ocurrió un error al actualizar el estado de la orden',
-        error: error.message,
-      });
-    }
-  }*/
-    // async markAsReadyToDeliver(req, res, next) {
-    //   try {
-    //     const { id } = req.body;
-    
-    //     if (!id) {
-    //       return res.status(400).json({
-    //         success: false,
-    //         message: 'El ID de la orden es requerido',
-    //       });
-    //     }
-    
-    //     const order = {
-    //       id,
-    //       status: 'Listo para envío'
-    //     };
-    
-    //     await Order.update(order);
-    
-    //     return res.status(200).json({
-    //       success: true,
-    //       message: 'La orden fue marcada como lista para envío',
-    //     });
-    
-    //   } catch (error) {
-    //     console.error(`Error: ${error}`);
-    //     return res.status(500).json({
-    //       success: false,
-    //       message: 'Ocurrió un error al actualizar la orden',
-    //       error: error.message,
-    //     });
-    //   }
-    // }
-
     async markAsReadyToDeliver(req, res, next) {
       try {
         let order = req.body;
@@ -150,6 +79,25 @@ module.exports = {
           success: false,
           message: 'Ocurrió un error al actualizar la orden',
           error: error.message,
+        });
+      }
+    },
+
+    // Buscar direcciones por ID de usuario
+    getOrdersByDeliveryAndStatus: async (req, res, next) => {
+      try {
+        const id_delivery = req.params.id_delivery;
+        const status = req.params.status;
+
+        const data = await Order.getOrdersByDeliveryAndStatus(id_delivery, status);
+        console.log(`Status del delivery${JSON.stringify(data)}`);
+        return res.status(201).json(data);
+      } catch (error) {
+        console.log(`Error ${error}`);
+        return res.status(501).json({
+          message: 'Ocurrió un error al tratar de obtener los pedidos asignados al delivery',
+          error: error,
+          success: false
         });
       }
     }
