@@ -107,4 +107,25 @@ Order.findByStatus = async (status) => {
   return db.manyOrNone(sql, [status]); // nada de JSON.stringify manual
 };
 
+Order.update = async (order) => {
+  const sql = `
+    UPDATE orders SET
+      id_client = $1,
+      id_address = $2,
+      id_delivery = $3,
+      status = $4,
+      updated_at = $5
+    WHERE id = $6;
+  `;
+
+  return await db.none(sql, [
+    order.id_client,
+    order.id_address,
+    order.id_delivery || null,
+    order.status,
+    new Date(),
+    order.id, // ID de la orden que se va a actualizar
+  ]);
+};
+
 module.exports = Order;

@@ -15,4 +15,11 @@ module.exports = (app) => {
     */
 
     app.post('/api/orders/create', passport.authenticate('jwt', {session: false}), OrdersController.createOrder); //es necesario que el usuario envíe el token
+
+
+    /*
+    * PUT ROUTES
+    */
+
+    app.put('/api/orders/markAsReadyToDeliver', passport.authenticate('jwt', {session: false}), OrdersController.markAsReadyToDeliver); //es necesario que el usuario envíe el token
 }
