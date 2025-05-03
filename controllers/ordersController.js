@@ -130,7 +130,7 @@ module.exports = {
     async markAsReadyToDeliver(req, res, next) {
       try {
         let order = req.body;
-        order.status = 'Listo para envío';
+        order.status = 'LISTO_PARA_ENVIO';
         await Order.update(order);
 
         return res.status(200).json({
