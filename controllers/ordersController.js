@@ -155,6 +155,24 @@ module.exports = {
           success: false
         });
       }
+    },
+
+    // Buscar direcciones por ID de usuario
+    getOrdersByClientAndStatus: async (req, res, next) => {
+      try {
+        const id_client = req.params.id_client;
+        const status = req.params.status;
+
+        const data = await Order.getOrdersByClientAndStatus(id_client, status);
+        return res.status(201).json(data);
+      } catch (error) {
+        console.log(`Error ${error}`);
+        return res.status(501).json({
+          message: 'Ocurrió un error al tratar de obtener los pedidos asignados al delivery',
+          error: error,
+          success: false
+        });
+      }
     }
     
 };

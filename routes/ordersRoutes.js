@@ -9,6 +9,8 @@ module.exports = (app) => {
 
     app.get('/api/orders/findByStatus/:status', passport.authenticate('jwt', {session: false}), OrdersController.findByStatus); //es necesario que el usuario envíe el token
     app.get('/api/orders/getOrdersByDeliveryAndStatus/:id_delivery/:status', passport.authenticate('jwt', {session: false}), OrdersController.getOrdersByDeliveryAndStatus);
+    app.get('/api/orders/getOrdersByClientAndStatus/:id_client/:status', passport.authenticate('jwt', {session: false}), OrdersController.getOrdersByClientAndStatus);
+
 
     /*
     * POST ROUTES

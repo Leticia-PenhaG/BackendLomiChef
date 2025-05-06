@@ -219,6 +219,61 @@ Order.getOrdersByDeliveryAndStatus = async (id_delivery, status) => {
   return db.manyOrNone(sql, [id_delivery, status]); // nada de JSON.stringify manual
 };
 
+Order.getOrdersByClientAndStatus = async (id_client, status) => {
+  const sql = `
+    SELECT O.id,
+      O.id_client,
+      O.id_address,
+      O.id_delivery,
+      O.status,
+      O.timestamp,
+	  JSON_AGG(
+		JSON_BUILD_OBJECT(
+			'id', P.id,
+			'name', P.name,
+			'description', P.description,
+			'price', P.price,
+			'image1', P.image1,
+			'image2', P.image2,
+			'image3', P.image3,	
+			'quantity', OHP.quantity
+		)
+	  ) AS PRODUCTS,
+      JSON_BUILD_OBJECT(
+        'id', U.id,
+        'name', U.name,
+        'lastname', U.lastname,
+        'image', U.image
+      ) AS client,
+	  JSON_BUILD_OBJECT(
+        'id', DEL.id,
+        'name', DEL.name,
+        'lastname', DEL.lastname,
+        'image', DEL.image
+      ) AS delivery,
+      JSON_BUILD_OBJECT(
+        'id', A.id,
+        'address', A.address,
+        'neighborhood', A.neighborhood,
+        'lat', A.lat,
+        'lng', A.lng
+      ) AS address
+    FROM orders O
+      INNER JOIN users U ON O.id_client = U.id
+	    LEFT JOIN users DEL ON O.id_delivery = DEL.id
+      INNER JOIN address A ON A.id = O.id_address
+      INNER JOIN orders_has_products OHP
+      ON OHP.id_order = O.id
+      INNER JOIN products P
+      ON P.id = OHP.id_product
+        WHERE O.id_client = $1 AND status = $2
+      GROUP BY 
+      O.id, U.id, A.id, DEL.id;
+  `;
+
+  return db.manyOrNone(sql, [id_client, status]); // nada de JSON.stringify manual
+};
+
 Order.update = async (order) => {
   const sql = `
     UPDATE orders SET
