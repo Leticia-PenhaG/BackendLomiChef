@@ -110,6 +110,34 @@ module.exports = {
       }
     },
 
+    async updateToDeliveryCompleted(req, res, next) {
+      try {
+        let order = req.body;
+        order.status = 'ENTREGA_COMPLETADA';
+        await Order.update(order);
+
+        return res.status(200).json({
+          success: true,
+          message: 'La orden fue marcada como completada',
+        });
+    
+
+        // return res.status(400).json({
+        //   success: false,
+        //   message: 'El ID de la orden es requerido',
+        // });
+
+      } catch (error) {
+        console.error(`Error: ${error}`);
+        return res.status(500).json({
+          success: false,
+          message: 'Ocurrió un error al actualizar la orden',
+          error: error.message,
+        });
+      }
+    },
+
+
     // Buscar direcciones por ID de usuario
     getOrdersByDeliveryAndStatus: async (req, res, next) => {
       try {
