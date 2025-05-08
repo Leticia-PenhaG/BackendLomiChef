@@ -9,9 +9,14 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 const passport = require('passport');
 const passportConfig = require('./config/passport');
-
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
+const io = require('socket.io')(server);
+
+/*
+ * SOCKETS
+ */
+const orderDeliverySocket = require('./socket/orders_delivery_socket');
 
 /*
  * INICIALIZAR FIREBASE ADMIN
@@ -67,6 +72,9 @@ require('./config/passport')(passport);
 app.disable("x-powered-by");
 
 app.set("port", port);
+
+//LLAMAR A LOS SOCKETS
+orderDeliverySocket(io);
 
 /*
  * Llamando a las rutas
