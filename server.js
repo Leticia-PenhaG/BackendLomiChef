@@ -9,9 +9,14 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 const passport = require('passport');
 const passportConfig = require('./config/passport');
-
 // Se pasa la instancia de Express (app) al servidor HTTP
 const server = http.createServer(app);
+const io = require('socket.io')(server);
+
+/*
+ * SOCKETS
+ */
+const orderDeliverySocket = require('./socket/orders_delivery_socket');
 
 /*
  * INICIALIZAR FIREBASE ADMIN
@@ -35,7 +40,7 @@ const users = require('./routes/usersRoutes');
 const categories = require('./routes/categoriesRoutes');
 const products = require('./routes/productsRoutes');
 const address = require('./routes/addressRoutes');
-
+const orders = require('./routes/ordersRoutes');
 const keys = require("./config/keys");
 
 const port = process.env.PORT || 3000;
@@ -68,6 +73,9 @@ app.disable("x-powered-by");
 
 app.set("port", port);
 
+//LLAMAR A LOS SOCKETS
+orderDeliverySocket(io);
+
 /*
  * Llamando a las rutas
  */
@@ -75,11 +83,12 @@ users(app, upload);
 categories(app);
 products(app, upload);
 address(app);
+orders(app);
 
 // Iniciar el servidor y escuchar en el puerto especificado
-server.listen(port, "192.168.100.5", () => {
+server.listen(port, "192.168.100.33", () => {
   console.log(
-    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en http://192.168.100.5:${port}`
+    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en http://192.168.100.33:${port}`
   );
 });
 

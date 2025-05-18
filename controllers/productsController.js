@@ -127,6 +127,23 @@ module.exports = {
           error: error
         });
       }
+    },
+
+    //PARA BUSCAR POR NOMBRE DE PRODUCTO
+    async findByCategoryAndProduct(req, res) {
+      try {
+        const id_category = req.params.id_category; //Envía el cliente, postman o flutter (igual el id_category que en la ruta)
+        const product_name = req.params.product_name;
+        const data = await Product.findByCategoryAndProduct(id_category, product_name);
+        return res.status(201).json(data);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ 
+          success: false, 
+          message: 'Error al listar los productos por categoría',
+          error: error
+        });
+      }
     }
 }
   

@@ -207,7 +207,7 @@ UsersController.login = async (req, res) => {
       const token = jwt.sign(
         { id: actual_user.id, email: actual_user.email }, // Payload del token (datos del usuario)
         keys.secretOrKey, // Clave secreta para firmar el token
-        { expiresIn: (60 * 10) } // Tiempo de expiración del token
+        { expiresIn: (60 * 10000) } // Tiempo de expiración del token
       );
 
       const sessionToken = `JWT ${token}`;
@@ -345,6 +345,33 @@ UsersController.delete = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error al eliminar el usuario",
+      data: null,
+    });
+  }
+};
+
+UsersController.loadCouriers = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await User.loadCouriers(id);
+    
+    if (user) {
+      res.status(200).json({
+        success: true,
+        message: "Usuario obtenido",
+        data: user,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Usuario no encontrado",
+        data: null,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener los repartidores",
       data: null,
     });
   }
