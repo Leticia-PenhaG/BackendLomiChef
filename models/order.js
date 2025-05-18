@@ -295,4 +295,19 @@ Order.update = async (order) => {
   ]);
 };
 
+Order.updateLatLng = async (order) => {
+  const sql = `
+    UPDATE orders SET
+      lat = $1,
+      lng = $2,
+      
+    WHERE id = $3;
+  `;
+
+  return await db.none(sql, [
+    order.lat,
+    order.lng,
+    order.id // ID de la orden que se va a actualizar
+  ]);
+};
 module.exports = Order;

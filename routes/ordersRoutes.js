@@ -26,5 +26,6 @@ module.exports = (app) => {
     app.put('/api/orders/markAsReadyToDeliver', passport.authenticate('jwt', {session: false}), OrdersController.markAsReadyToDeliver); //es necesario que el usuario envíe el token
     app.put('/api/orders/updateOrderToOnTheWay', passport.authenticate('jwt', {session: false}), OrdersController.updateOrderToOnTheWay); //es necesario que el usuario envíe el token
     app.put('/api/orders/updateToDeliveryCompleted', passport.authenticate('jwt', {session: false}), OrdersController.updateToDeliveryCompleted); //es necesario que el usuario envíe el token
+    app.put('/api/orders/updateLatLng', passport.authenticate('jwt', {session: false}), OrdersController.updateLatLng); //es necesario que el usuario envíe el token
 
 }

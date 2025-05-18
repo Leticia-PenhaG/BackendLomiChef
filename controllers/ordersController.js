@@ -173,6 +173,32 @@ module.exports = {
           success: false
         });
       }
-    }
+    },
+
+    async updateLatLng(req, res, next) {
+      try {
+        let order = req.body;
+        await Order.updateLatLng(order);
+
+        return res.status(200).json({
+          success: true,
+          message: 'La orden se actualizó correctamente',
+        });
+    
+
+        // return res.status(400).json({
+        //   success: false,
+        //   message: 'El ID de la orden es requerido',
+        // });
+
+      } catch (error) {
+        console.error(`Error: ${error}`);
+        return res.status(500).json({
+          success: false,
+          message: 'Ocurrió un error al actualizar la orden',
+          error: error.message,
+        });
+      }
+    },
     
 };
