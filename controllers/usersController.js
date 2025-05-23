@@ -305,20 +305,42 @@ UsersController.logout = async (req, res, next) => {
   }
 };
 
-/*UsersController.logout = async (req, res, next) => {
+//UPDATE NOTIFICATIONS TOKEN
+UsersController.updateNotificationToken = async (req, res, next) => {
   try {
-    const id = req.body.id;     //req.user.id si el ID está en el token JWT
-    await User.updateSessionToken(id, null);
-    return res.status(501).json({
-      success:true,
-      message:'La sesión del usuario se cerró correctamente'
+    const body = req.body;
+    await User.updateNotificationToken(body.id, body.notification_token);
+
+    return res.status(200).json({
+      success: true,
+      message: "El token de notificaciones se almacenó correctamente"
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Ocurrió un error al tratar de actualizar el token de notificaciones del usuario",
+      error: error
     });
   }
-  catch (error) {
-    console.log(`Error: ${error}`);
-    return res.status(501).json({
-      success:false,
-      message:'Error al cerrar sesión'
+}
+
+//UPDATE NOTIFICATIONS TOKEN cha
+/*UsersController.updateNotificationToken = async (req, res, next) => {
+  const { id, updateNotificationToken } = req.body;
+
+  try {
+    // Asegurate de que este método exista en tu modelo User
+    await User.updateNotificationToken(id, updateNotificationToken);
+
+    res.status(200).json({
+      success: true,
+      message: "El token de notificaciones se almacenó correctamente",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Ocurrió un error al tratar de actualizar el token de notificaciones del usuario",
+      error: error.message || error
     });
   }
 };*/

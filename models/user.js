@@ -262,4 +262,22 @@ User.updateSessionToken = (userId, sessionToken) => {
   return db.none(sql, [sessionToken, userId]);
 };
 
+//Función para actualizar el token del usuario en el campo notification_token
+User.updateNotificationToken = (userId, sessionToken) => {
+  const sql = `
+    UPDATE 
+      users 
+    SET 
+      notification_token = $2 
+    WHERE 
+      id = $1
+  `;
+
+  return db.none(sql,
+     [
+      userId,
+      sessionToken
+     ]);
+};
+
 module.exports = User;
