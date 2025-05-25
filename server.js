@@ -86,9 +86,9 @@ address(app);
 orders(app);
 
 // Iniciar el servidor y escuchar en el puerto especificado
-server.listen(port, "192.168.100.5", () => {
+server.listen(port, "192.168.100.33", () => {
   console.log(
-    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en http://192.168.100.5:${port}`
+    `Aplicación de NodeJS en proceso ${process.pid} iniciada y escuchando en http://192.168.100.33:${port}`
   );
 
 });
