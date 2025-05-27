@@ -284,4 +284,24 @@ User.updateNotificationToken = (userId, sessionToken) => {
      ]);
 };
 
+User.getAdminsNotificationTokens = () => {
+  const sql = `
+    SELECT
+      U.notification_token
+    FROM
+      users AS U
+    INNER JOIN
+      user_has_roles AS UHR
+    ON
+      UHR.id_user = U.id
+    INNER JOIN
+      roles AS R
+    ON
+      R.id = UHR.id_role
+    WHERE
+      R.id = 2
+  `
+  return db.manyOrNone(sql);
+}
+
 module.exports = User;
