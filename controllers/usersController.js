@@ -324,27 +324,6 @@ UsersController.updateNotificationToken = async (req, res, next) => {
   }
 }
 
-//UPDATE NOTIFICATIONS TOKEN cha
-/*UsersController.updateNotificationToken = async (req, res, next) => {
-  const { id, updateNotificationToken } = req.body;
-
-  try {
-    // Asegurate de que este método exista en tu modelo User
-    await User.updateNotificationToken(id, updateNotificationToken);
-
-    res.status(200).json({
-      success: true,
-      message: "El token de notificaciones se almacenó correctamente",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Ocurrió un error al tratar de actualizar el token de notificaciones del usuario",
-      error: error.message || error
-    });
-  }
-};*/
-
 // Eliminar un usuario por ID
 UsersController.delete = async (req, res) => {
   const { id } = req.params;
@@ -380,13 +359,13 @@ UsersController.loadCouriers = async (req, res) => {
     if (user) {
       res.status(200).json({
         success: true,
-        message: "Usuario obtenido",
+        message: "Repartidores obtenidos",
         data: user,
       });
     } else {
       res.status(404).json({
         success: false,
-        message: "Usuario no encontrado",
+        message: "Repartidor no encontrado",
         data: null,
       });
     }
@@ -394,6 +373,76 @@ UsersController.loadCouriers = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error al obtener los repartidores",
+      data: null,
+    });
+  }
+};
+
+// UsersController.getAdminsNotificationTokens = async (req, res) => {
+//   const id = req.params.id;
+//   try {
+//     const data = await User.getAdminsNotificationTokens();
+
+//     let tokens = [];
+
+//     data.array.forEach(element => {
+//       tokens.push(element.notification_token);
+//     });
+
+//     console.log(`Tokens: ${tokens}`);
+    
+//      if (data) {
+//       res.status(200).json({
+//         success: true,
+//         message: "Tokens obtenidos",
+//         data: data,
+//       });
+//     } else {
+//       res.status(404).json({
+//         success: false,
+//         message: "Tokens no encontrado",
+//         data: null,
+//       });
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Error al obtener los tokens",
+//       data: null,
+//     });
+//   }
+// };
+
+UsersController.getAdminsNotificationTokens = async (req, res) => {
+  try {
+    const data = await User.getAdminsNotificationTokens();
+
+    let tokens = [];
+
+    data.forEach(element => {
+      tokens.push(element.notification_token);
+    });
+
+    console.log(`Tokens: ${tokens}`);
+    
+    if (data && data.length > 0) {
+      res.status(200).json({
+        success: true,
+        message: "Tokens obtenidos",
+        data: tokens, // puedes devolver solo los tokens si no necesitas todo
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "Tokens no encontrados",
+        data: [],
+      });
+    }
+  } catch (error) {
+    console.error("Error en getAdminsNotificationTokens:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener los tokens",
       data: null,
     });
   }

@@ -44,7 +44,8 @@ User.getById = (id, callback) => {
         image,
         is_available,
         lastname,
-        session_token
+        session_token,
+        notification_token
     FROM 
         users
     WHERE 
@@ -68,6 +69,7 @@ User.findByEmail = (email) => {
         u.is_available,
         u.lastname,
         u.session_token,
+        u.notification_token,
 		json_agg(
 			json_build_object(
 				'id', r.id,
@@ -105,7 +107,8 @@ User.loadCouriers = () => {
         u.image,
         u.phone,
         u.password,
-        u.session_token
+        u.session_token,
+        u.notification_token
 		FROM 
       users U 
     INNER JOIN 
@@ -202,6 +205,7 @@ User.findUserById = (id) => {
         u.is_available,
         u.lastname,
         u.session_token,
+        u.notification_token,
 		json_agg(
 			json_build_object(
 				'id', r.id,
@@ -279,5 +283,25 @@ User.updateNotificationToken = (userId, sessionToken) => {
       sessionToken
      ]);
 };
+
+User.getAdminsNotificationTokens = () => {
+  const sql = `
+    SELECT
+      U.notification_token
+    FROM
+      users AS U
+    INNER JOIN
+      user_has_roles AS UHR
+    ON
+      UHR.id_user = U.id
+    INNER JOIN
+      roles AS R
+    ON
+      R.id = UHR.id_role
+    WHERE
+      R.id = 2
+  `
+  return db.manyOrNone(sql);
+}
 
 module.exports = User;
